@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Educational Games - Dislexia vs Discalculia</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <h1>Mini-jogos Educativos</h1>
+  <div class="game-selector">
+    <button onclick="startDislexiaGame()">Jogar Dislexia</button>
+    <button onclick="startDiscalculiaGame()">Jogar Discalculia</button>
+  </div>
+
+  <!-- Canvas para o jogo de dislexia -->
+  <canvas id="dislexiaCanvas" width="400" height="200" style="border:1px solid black; display:none;"></canvas>
+
+  <!-- Textbox para o jogo de dislexia -->
+  <div id="dislexiaTextbox" style="display:none;">
+    <p>Digite a palavra correta:</p>
+    <input type="text" id="dislexiaInput" placeholder="Escreva aqui...">
+    <button onclick="checkDislexiaWord()">Verificar</button>
+  </div>
+
+  <!-- Canvas para o jogo de discalculia -->
+  <canvas id="discalculiaCanvas" width="400" height="400" style="border:1px solid black; display:none;"></canvas>
+
+  <script src="script.js"></script>
+</body>
+</html>
