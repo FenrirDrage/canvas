@@ -133,3 +133,51 @@ document.addEventListener("DOMContentLoaded", () => {
   drawRandomShapes(10);
   setInterval(() => drawRandomShapes(10), 1000);
 });
+
+// Typoglycemia effect on canvas
+const canvas = document.getElementById("dyslexiaCanvas");
+const ctx = canvas.getContext("2d");
+const intervalTime = 200;
+let scrambleInterval;
+
+const textLines = [
+  "Dyslexia",
+  "Friends who have dyslexia described to me how they experience reading...",
+  "I remembered reading about typoglycemia...",
+  "Dyslexia is characterized by difficulty with learning to read fluently",
+  "and with accurate comprehension.",
+];
+
+function scrambleWord(word) {
+  if (word.length < 4) return word;
+  let middle = word.slice(1, -1).split("");
+  for (let i = middle.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [middle[i], middle[j]] = [middle[j], middle[i]];
+  }
+  return word[0] + middle.join("") + word[word.length - 1];
+}
+
+function scrambleTextLines() {
+  return textLines.map((line) =>
+    line
+      .split(" ")
+      .map((word) => (Math.random() < 0.3 ? scrambleWord(word) : word))
+      .join(" ")
+  );
+}
+
+function drawScrambledText() {
+  const scrambledLines = scrambleTextLines();
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.font = "34px Montserrat";
+  ctx.fillStyle = "#ff7f50";
+  ctx.textAlign = "left";
+  ctx.textBaseline = "middle";
+
+  scrambledLines.forEach((line, index) => {
+    ctx.fillText(line, 10, index * 30 + 20);
+  });
+}
+
+scrambleInterval = setInterval(drawScrambledText, intervalTime);
