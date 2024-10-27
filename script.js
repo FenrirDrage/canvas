@@ -1,67 +1,92 @@
-// Referências aos elementos de canvas e input
-const dislexiaCanvas = document.getElementById('dislexiaCanvas');
-const discalculiaCanvas = document.getElementById('discalculiaCanvas');
-const dislexiaCtx = dislexiaCanvas.getContext('2d');
-const dislexiaTextbox = document.getElementById('dislexiaTextbox');
-const dislexiaInput = document.getElementById('dislexiaInput');
+document.addEventListener("DOMContentLoaded", () => {
+  const sections = document.querySelectorAll(".section");
+  const arrows = document.querySelectorAll(".scroll-arrow");
+  let previousSectionId = "title";
 
-let currentWord = 'frigorifico'; // Palavra correta a ser mostrada
-let shuffledWord = ''; // Palavra com letras embaralhadas
-let isDislexiaGameRunning = false;
-
-// Funções para iniciar os jogos
-function startDislexiaGame() {
-  dislexiaCanvas.style.display = 'block';
-  dislexiaTextbox.style.display = 'block';
-  discalculiaCanvas.style.display = 'none';
-  isDislexiaGameRunning = true;
-
-  shuffleWord();
-  animateDislexiaGame();
-}
-
-function startDiscalculiaGame() {
-  dislexiaCanvas.style.display = 'none';
-  dislexiaTextbox.style.display = 'none';
-  discalculiaCanvas.style.display = 'block';
-  isDislexiaGameRunning = false;
-
-  // Iniciar lógica do jogo de Discalculia aqui...
-}
-
-// Função para embaralhar a palavra
-function shuffleWord() {
-  let letters = currentWord.split('');
-  for (let i = letters.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [letters[i], letters[j]] = [letters[j], letters[i]];
+  function hideAllSections() {
+    sections.forEach((section) => {
+      section.style.display = "none";
+    });
   }
-  shuffledWord = letters.join('');
-}
 
-// Função para animar o jogo de dislexia (troca de letras)
-function animateDislexiaGame() {
-  if (!isDislexiaGameRunning) return;
+  function showSection(section, direction) {
+    section.style.display = "flex";
+    section.classList.add("active");
 
-  shuffleWord(); // Troca as letras cada vez que a função é chamada
-  dislexiaCtx.clearRect(0, 0, dislexiaCanvas.width, dislexiaCanvas.height);
-  dislexiaCtx.font = '30px Arial';
-  dislexiaCtx.fillText(shuffledWord, 50, 100);
+    if (direction === "next") {
+      section.classList.add("slide-in-bottom");
+    } else if (direction === "previous") {
+      section.classList.add("slide-in-top");
+    }
 
-  // Animação continua a ser executada
-  setTimeout(animateDislexiaGame, 1000); // Atualiza a cada 1 segundo
-}
-
-// Função para verificar se a palavra digitada está correta
-function checkDislexiaWord() {
-  const userInput = dislexiaInput.value.toLowerCase();
-  if (userInput === currentWord) {
-    alert('Correto!');
-    dislexiaInput.value = ''; // Limpa a caixa de texto
-    isDislexiaGameRunning = false; // Para a animação
-    dislexiaCanvas.style.display = 'none'; // Esconde o canvas
-    dislexiaTextbox.style.display = 'none'; // Esconde a textbox
-  } else {
-    alert('Tenta novamente!');
+    section.addEventListener(
+      "animationend",
+      () => {
+        section.classList.remove("slide-in-bottom", "slide-in-top");
+      },
+      { once: true }
+    );
   }
-}
+
+  // Initialize visibility
+  hideAllSections();
+  showSection(document.getElementById("title"), "next");
+
+  // Event listeners for arrows
+  arrows.forEach((arrow) => {
+    arrow.addEventListener("click", (event) => {
+      event.preventDefault();
+
+      const targetId = arrow.getAttribute("href").substring(1);
+      const targetSection = document.getElementById(targetId);
+
+      const direction = previousSectionId < targetId ? "next" : "previous";
+      previousSectionId = targetId;
+
+      hideAllSections();
+      showSection(targetSection, direction);
+      updateArrowVisibility(targetId);
+    });
+  });
+
+  // Event listeners for game buttons
+  document.getElementById("startDyslexiaGame").addEventListener("click", () => {
+    fadeTransition("dyslexia-game");
+  });
+
+  document
+    .getElementById("startDyscalculiaGame")
+    .addEventListener("click", () => {
+      fadeTransition("dyscalculia-game");
+    });
+
+  // Fade transition function
+  function fadeTransition(targetId) {
+    hideAllSections();
+    const targetSection = document.getElementById(targetId);
+    targetSection.style.opacity = "0";
+    targetSection.style.display = "flex";
+
+    setTimeout(() => {
+      targetSection.style.opacity = "1";
+    }, 100);
+  }
+
+  function updateArrowVisibility(activeSectionId) {
+    arrows.forEach((arrow) => {
+      const targetId = arrow.getAttribute("href").substring(1);
+      if (activeSectionId === "title" && arrow.classList.contains("previous")) {
+        arrow.style.display = "none";
+      } else if (
+        activeSectionId === "dyscalculia-game" &&
+        arrow.classList.contains("next")
+      ) {
+        arrow.style.display = "none";
+      } else {
+        arrow.style.display = "";
+      }
+    });
+  }
+
+  updateArrowVisibility("title");
+});
