@@ -1,6 +1,13 @@
 document.addEventListener("DOMContentLoaded", () => {
   const sections = document.querySelectorAll(".section");
   const arrows = document.querySelectorAll(".scroll-arrow");
+  const sectionOrder = [
+    "title",
+    "dislexia",
+    "dyslexia-game",
+    "dyscalculia",
+    "dyscalculia-game",
+  ];
   let previousSectionId = "title";
 
   function hideAllSections() {
@@ -28,11 +35,10 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   }
 
-  // Initialize visibility
+  // Inicializa visibilidade
   hideAllSections();
   showSection(document.getElementById("title"), "next");
 
-  // Event listeners for arrows
   arrows.forEach((arrow) => {
     arrow.addEventListener("click", (event) => {
       event.preventDefault();
@@ -40,7 +46,11 @@ document.addEventListener("DOMContentLoaded", () => {
       const targetId = arrow.getAttribute("href").substring(1);
       const targetSection = document.getElementById(targetId);
 
-      const direction = previousSectionId < targetId ? "next" : "previous";
+      // Determina direção com base na ordem das secções
+      const currentIdx = sectionOrder.indexOf(previousSectionId);
+      const targetIdx = sectionOrder.indexOf(targetId);
+      const direction = targetIdx > currentIdx ? "next" : "previous";
+
       previousSectionId = targetId;
 
       hideAllSections();
@@ -48,29 +58,6 @@ document.addEventListener("DOMContentLoaded", () => {
       updateArrowVisibility(targetId);
     });
   });
-
-  // Event listeners for game buttons
-  document.getElementById("startDyslexiaGame").addEventListener("click", () => {
-    fadeTransition("dyslexia-game");
-  });
-
-  document
-    .getElementById("startDyscalculiaGame")
-    .addEventListener("click", () => {
-      fadeTransition("dyscalculia-game");
-    });
-
-  // Fade transition function
-  function fadeTransition(targetId) {
-    hideAllSections();
-    const targetSection = document.getElementById(targetId);
-    targetSection.style.opacity = "0";
-    targetSection.style.display = "flex";
-
-    setTimeout(() => {
-      targetSection.style.opacity = "1";
-    }, 100);
-  }
 
   function updateArrowVisibility(activeSectionId) {
     arrows.forEach((arrow) => {
