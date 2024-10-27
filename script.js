@@ -90,3 +90,59 @@ document.addEventListener("DOMContentLoaded", () => {
 
   updateArrowVisibility("title");
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+  const shapesCanvas = document.getElementById("shapesCanvas");
+  const ctx = shapesCanvas.getContext("2d");
+
+  // Função para gerar uma cor aleatória
+  function getRandomColor() {
+    const letters = "0123456789ABCDEF";
+    let color = "#";
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }
+
+  // Função para desenhar uma forma aleatória
+  function drawRandomShape() {
+    const shapeType = Math.floor(Math.random() * 3); // 0: Círculo, 1: Quadrado, 2: Triângulo
+    const x = Math.random() * shapesCanvas.width;
+    const y = Math.random() * shapesCanvas.height;
+    const size = Math.random() * 50 + 20;
+    const color = getRandomColor();
+
+    ctx.fillStyle = color;
+
+    if (shapeType === 0) {
+      // Círculo
+      ctx.beginPath();
+      ctx.arc(x, y, size / 2, 0, Math.PI * 2);
+      ctx.fill();
+    } else if (shapeType === 1) {
+      // Quadrado
+      ctx.fillRect(x, y, size, size);
+    } else if (shapeType === 2) {
+      // Triângulo
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + size, y);
+      ctx.lineTo(x + size / 2, y - size);
+      ctx.closePath();
+      ctx.fill();
+    }
+  }
+
+  // Função para desenhar várias formas aleatórias
+  function drawRandomShapes(count) {
+    ctx.clearRect(0, 0, shapesCanvas.width, shapesCanvas.height); // Limpa o canvas
+    for (let i = 0; i < count; i++) {
+      drawRandomShape();
+    }
+  }
+
+  // Desenhar 10 formas aleatórias inicialmente e repetir a cada segundo
+  drawRandomShapes(10);
+  setInterval(() => drawRandomShapes(10), 1000);
+});
